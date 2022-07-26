@@ -42,7 +42,7 @@
             {
                 AddToEmail(customer, @event);
             }
-
+            
             /*
             * We want you to send an email to this customer with all events in their city
             * Just call AddToEmail(customer, event) for each event you think they should get
@@ -98,11 +98,6 @@
             foreach (Event @event in events)
             {
                 int distance = GetDistance(customer.City, @event.City);
-                if (distance == 0)
-                {
-                    continue;
-                }
-
                 eventsDistance.Add(KeyValuePair.Create(@event, distance));
             }
 
@@ -115,19 +110,21 @@
 
             var selectedEvents = eventsDistance.Take(5);
 
-            return eventsDistance.Select(v => v.Key).ToList();
+            return selectedEvents.Select(v => v.Key).ToList();
         }
 
         //Task 3
 
         /*
-         * We could asynchronous programing or multi threading
+         * We could asynchronous programing
          */
         static List<Event> GetClosestLocations2(Customer customer, List<Event> events)
         {
+            bool ApiFailed = false;
             List<KeyValuePair<Event, int>> eventsDistance = new List<KeyValuePair<Event, int>>();
             foreach (Event @event in events)
             {
+                
                 try
                 {
                     int distance = GetDistance(customer.City, @event.City);
@@ -135,10 +132,17 @@
                 }
                 catch (Exception e)
                 {
+                    ApiFailed = true;
                     Console.WriteLine(e);
-                    throw;
                 }
-
+                finally
+                {
+                    if (ApiFailed)
+                    {
+                        Console.WriteLine("Failure Try again");
+                    }
+                    Console.WriteLine("distance found");
+                }
             }
 
             //Sort the list ascending and take 5
@@ -163,20 +167,22 @@
 
 
         //Task 5
-        static List<KeyValuePair<Event, int>> EventsWithPrice(List<Event> events)
+        static List<Event> EventsWithPrice(List<Event> events, Dictionary<string, string> filter)
         {
-            List<KeyValuePair<Event, int>> selectedEvents = new List<KeyValuePair<Event, int>>();
-
+            List<Event> selectedEvents = new List<Event>();
+            
+            
             foreach (var @event in events)
-            {
-                int price = GetPrice(@event);
-                selectedEvents.Add(KeyValuePair.Create(@event, price));
+            {   /*
+                * When filter is price
+                **/
+            
+                if (GetPrice(@event) == int.Parse(filter["price"]))
+                {
+                    selectedEvents.Add(@event);
+                }
             }
-
-            /* Select desired events based on price
-             * selectedEvents.Where(kv => kv.Value == 4).ToList();
-             * 
-             */
+            
             return selectedEvents;
         }
     }
