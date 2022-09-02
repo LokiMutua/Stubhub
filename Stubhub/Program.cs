@@ -1,8 +1,8 @@
 ﻿namespace Stubhub {
     public class Event
     {
-        public string Name{ get; set; }
-        public string City{ get; set; }
+        public string Name { get; set; }
+        public string City { get; set; }
     }
     
     public class Customer
@@ -38,25 +38,32 @@
             /*
              * Add customer events above to customer's email
              */
-            foreach (Event @event in customerEvents)
+            /**foreach (Event @event in customerEvents)
             {
                 AddToEmail(customer, @event);
-            }
-            
+            }**/
+
             /*
             * We want you to send an email to this customer with all events in their city
             * Just call AddToEmail(customer, event) for each event you think they should get
             */
+
+            List<Event> results = GetClosestLocations(customer, events);
+            foreach(Event ev in results)
+            {
+                Console.WriteLine(ev.Name);
+            }
+
         }
 
         // You do not need to know how these methods work
-        static void AddToEmail(Customer c, Event e, int? price = null)
+        /**static void AddToEmail(Customer c, Event e, int? price = null)
         {
             var distance = GetDistance(c.City, e.City);
             Console.Out.WriteLine($"{c.Name}: {e.Name} in {e.City}"
                                   + (distance > 0 ? $" ({distance} miles away)" : "")
                                   + (price.HasValue ? $" for ${price}" : ""));
-        }
+        }**/
 
         static int GetPrice(Event e)
         {
@@ -186,6 +193,8 @@
             return selectedEvents;
         }
     }
+
+    
 
 }
 
